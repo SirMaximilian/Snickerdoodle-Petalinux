@@ -1,0 +1,1 @@
+dtc -I dtb -O dts -o images/linux/decompiled_system.dts images/linux/system.dtb
