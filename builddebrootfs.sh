@@ -281,17 +281,17 @@ EOF
 
 chmod 755 $rootfs/etc/snickerdoodle/accesspoint/wlan.sh
 
-# cat > $rootfs/etc/netplan/98_wifi.yaml <<EOF
-# network:
-#   version: 2
-#   renderer: networkd
-#   wifis:
-#     wlan0:
-#       dhcp4: yes
-#       access-points:
-#          "redacted":
-#             password: "Redacted"
-# EOF
+cat > $rootfs/etc/netplan/98_wifi.yaml <<EOF
+network:
+  version: 2
+  renderer: networkd
+  wifis:
+    wlan0:
+      dhcp4: yes
+      access-points:
+         "xxx":
+            password: "xxx"
+EOF
 
 cat > $rootfs/etc/netplan/99_config.yaml << "EOF"
 network:
@@ -329,22 +329,14 @@ EOF
 
 cat > $rootfs/usr/local/bin/resizerootfs.sh<< "EOF"
 #!/usr/bin/env bash
-
 set -e
-
 rootpart="/dev/$(lsblk -l -o NAME,MOUNTPOINT | grep '/' | awk '{print $1}')"
 rootdevice="/dev/$(lsblk -no pkname "$rootpart")"
-
 #rootdevice="/dev/$(lsblk -no pkname "/dev/$(lsblk -l -o NAME,MOUNTPOINT | grep '/' | awk '{print $1}')")"
-
 partprobe "$rootdevice"
-
 echo ", +" | sfdisk -f -N 1 "$rootdevice"
-
 partprobe "$rootdevice"
-
 resize2fs "$rootpart"
-
 partprobe "$rootdevice"
 
 EOF
@@ -370,12 +362,10 @@ cat > $rootfs/usr/lib/systemd/system/setup_wlan.service << "EOF"
 Description=configure wlan1 interface
 After=network.target
 
-
 [Service]
 Type=oneshot
 RemainAfterExit=yes
 ExecStart=/etc/snickerdoodle/accesspoint/wlan.sh
-
 
 [Install]
 WantedBy=multi-user.target

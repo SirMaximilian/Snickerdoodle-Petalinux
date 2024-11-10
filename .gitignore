@@ -12,3 +12,6 @@ components/plnx_workspace
 components/yocto
 debrootfs/
 *.tar.gz
+wlconf
+*.deb
+*.wic

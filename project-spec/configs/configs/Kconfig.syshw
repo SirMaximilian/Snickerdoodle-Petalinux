@@ -1,10 +1,4 @@
-menuconfig SUBSYSTEM_HARDWARE_AUTO
-	bool "Subsystem AUTO Hardware Settings"
-	default y
-	help
-	  This menu is to configure system hardware.
-
-if SUBSYSTEM_HARDWARE_AUTO
+menu "Subsystem Hardware Settings"
 
 
 config SUBSYSTEM_PROCESSOR0_IP_NAME
@@ -105,25 +99,18 @@ config SUBSYSTEM_MEMORY_MANUAL_UPPER_MEMORYSIZE
 	  If you specify 0x0 offset then it will skip generating upper memory node.
 
 
-config SUBSYSTEM_MEMORY_PS7_DDR_0_BANKLESS_KERNEL_BASEADDR
-	hex "kernel base address"
-	default 0x0
-	range 0x0 0x3e000000
-	depends on SUBSYSTEM_MEMORY_PS7_DDR_0_BANKLESS_SELECT
-	depends on SUBSYSTEM_ARCH_ARM || SUBSYSTEM_ARCH_AARCH64
-	help
-	  kernel base address.
-
-
-
 config SUBSYSTEM_MEMORY_PS7_DDR_0_BANKLESS_U__BOOT_TEXTBASE_OFFSET
-	hex "u-boot text base address offset to memory base address"
+	hex "u-boot text base address"
 	default 0x8000000 if SUBSYSTEM_ARCH_AARCH64
 	default 0x4000000 if SUBSYSTEM_ARCH_ARM
 	default 0x100000 if SUBSYSTEM_ARCH_MICROBLAZE
 	range 0x100000 0x3e100000
 	depends on SUBSYSTEM_MEMORY_PS7_DDR_0_BANKLESS_SELECT
 	depends on !SUBSYSTEM_COMPONENT_U__BOOT_NAME_NONE
+	help
+	  u-boot text base address by specifying from the memory base address.
+	  u-boot load address = bank base address + offset. And same value will
+	  pass to TF-A also. Minimum suggested is 1MB.
 
 
 
@@ -152,10 +139,16 @@ bool "manual"
 	endchoice
 
 choice
-	prompt "DTG Serial stdin/stdout"
+	prompt "U-boot/Linux Serial stdin/stdout"
 
 help
 	  Select a serial as the DTG's stdin,stdout.
+	  If you select 'manual', you will need to add this variable 
+	  YAML_SERIAL_CONSOLE_STDIN:forcevariable:pn-DTG = "<serial_ipname>" 
+	  YAML_SERIAL_CONSOLE_STDOUT:forcevariable:pn-DTG = "<serial_ipname>" 
+
+help
+	  Select a serial as the U-boot and Linux's stdin,stdout.
 	  If you select 'manual', you will need to add this variable 
 	  YAML_SERIAL_CONSOLE_STDIN:forcevariable:pn-DTG = "<serial_ipname>" 
 	  YAML_SERIAL_CONSOLE_STDOUT:forcevariable:pn-DTG = "<serial_ipname>" 
@@ -169,6 +162,9 @@ bool "manual"
 choice
 	prompt "System stdin/stdout baudrate for ps7_uart_0"
 	default SUBSYSTEM_SERIAL_PS7_UART_0_BAUDRATE_115200
+	help
+	Baudrate settings for serial Ip PS7_UART_0
+	The Baudrate setting applies only for U-boot/Linux serial Ip
 config SUBSYSTEM_SERIAL_PS7_UART_0_BAUDRATE_600
 	bool "600"	
 config SUBSYSTEM_SERIAL_PS7_UART_0_BAUDRATE_9600
@@ -975,4 +971,4 @@ config SUBSYSTEM_USB_PS7_USB_0_SELECT
 
 
 endif
-endif
+endmenu

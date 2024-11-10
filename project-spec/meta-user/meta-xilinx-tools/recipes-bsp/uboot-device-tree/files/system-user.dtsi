@@ -1,4 +1,6 @@
-/include/ "system-conf.dtsi" / { 	
+/include/ "system-conf.dtsi" /
+
+{ 	
     aliases{ 		
         eth0 = &gem0; 		
         eth1 = &gem1; 	
